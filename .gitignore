@@ -39,3 +39,5 @@ gradle-app.setting
 .vscode/*
 !.vscode/settings.json
 bin
+res/Run images/tile001.png
+res/Run images/tile000.png
