@@ -16,38 +16,40 @@ public class Game {
     // private Image background;
     
     private Character char1;
-    private final int CANVAS_WIDTH = 500;
-    private final int CANVAS_HEIGHT = 600;
+    public final static int CANVAS_WIDTH = 500;
+    public final static int CANVAS_HEIGHT = 600;
     private CanvasWindow canvas;
-    private int movementTimer;
+    private double movementTimer;
+    private int imageCount;
     
 
     public Game () {
         canvas = new CanvasWindow(null, CANVAS_WIDTH, CANVAS_HEIGHT);
-        char1 = new Character(canvas.getWidth()/2, canvas.getHeight()/2, canvas); 
+        char1 = new Character(); 
+        imageCount = 0;
         movementTimer = 0;
-        
-        char1.getImage().setCenter(canvas.getWidth()/2, canvas.getHeight()/2);
         canvas.animate((dt) -> {
             handleCharacterMovement(dt);
             canvas.add(char1.getImage());
         });
     }
- 
 
     private void handleCharacterMovement(double dt) {
         Set<Key> keys = canvas.getKeysPressed();
-        if (!char1.getDirectionChanged()) {
-            movementTimer += (int) dt;
-        } else {
+        movementTimer += dt;
+        
+        if(movementTimer > .2) {
             movementTimer = 0;
+            imageCount ++;
+            if (imageCount ==6) imageCount = 0;
         }
+        System.out.println("imageCount = " + imageCount +" movemenTimer = "+ movementTimer);
         if (keys.contains(Key.LEFT_ARROW)) {
             char1.updatePosiiton("left");
             // char1.updateImage("left");
         } 
         if (keys.contains(Key.RIGHT_ARROW)) {
-            char1.handleMovement("right", movementTimer);
+            char1.handleMovement("right", imageCount);
         }
         if (keys.contains(Key.DOWN_ARROW)) {
             char1.updatePosiiton("down");

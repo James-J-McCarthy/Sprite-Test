@@ -15,103 +15,67 @@ import edu.macalester.graphics.Image;
 
 public class Character {
     private Image image;
-    private double speed = 4;
-    private double x, y;
+    private double speed = 5;
+    private double centerX, centerY;
     public double upTimer, downTimer, leftTimer, rightTimer;
     private double stepIncrement = 1;
     private String direction;
     private boolean direcitonChanged;
-    private Image r0, r1, r2, r3, r4, r5;
+    private Image r0, r1, r2, r3, r4, r5, r6;
     
-    public Character (double xPos, double yPos, CanvasWindow canvas) {
-        this.x = xPos;
-        this.y = yPos;
+    public Character () {
+        this.centerX = 250;
+        this.centerY = 300;
         direcitonChanged = false;
         rightTimer = 0;
         upTimer = 0;
         downTimer = 0;
         leftTimer = 0;
-        image = new Image(x, y, "runRight1.png");
+        image = new Image("runRight0.png");
+        image.setCenter(centerX, centerY);
         direction = "right";
-        loadImages(canvas);
+        loadImages();
     } 
         
-    private void loadImages(CanvasWindow canvas) {
-        r0 = new Image(x, y, "runRight0.png");
-        r1 = new Image(x, y, "runRight1.png");
-        r2 = new Image(x, y, "runRight2.png");
-        r3 = new Image(x, y, "runRight3.png");
-        r4 = new Image(x, y, "runRight4.png");
-        r5 = new Image(x, y, "runRight5.png");
+    private void loadImages() {
+        r0 = new Image(centerX, centerY, "runRight0.png");
+        r1 = new Image(centerX, centerY, "runRight1.png");
+        r2 = new Image(centerX, centerY, "runRight2.png");
+        r3 = new Image(centerX, centerY, "runRight3.png");
+        r4 = new Image(centerX, centerY, "runRight4.png");
+        r5 = new Image(centerX, centerY, "runRight5.png");
+        r6 = new Image(centerX, centerY, "Owlet_Monster.png");
     }
 
-    public void updateRightTimer (double dt) {
-        rightTimer += dt;
-    }
-
-    public void updateDirection (String direction) {
-        this.direction = direction;
-    }
-
-    public boolean getDirectionChanged() {
-        return direcitonChanged;
-    }
-
-    public void handleMovement(String direction, int mt) {
-        direcitonChanged = false;
-        if (direction.equals(this.direction)) {
-            direcitonChanged = true;
-        }
-        updateImage(mt);
+    public void handleMovement(String direction, int ic) {
+        updateImage(ic);
         updatePosiiton(direction);
     }
 
-    public void updateImage (int mt) {
-        int t = mt;
-        while (t > 59) {
-            t -= 60;
-        }
-        t /= 10;
-        if(t ==0) {
-            image = r0;
-        }
-        if(t ==1) {
-            image = r1;
-        }
-        if(t ==2) {
-            image = r2;
-        }
-        if(t ==3) {
-            image = r3;
-        }
-        if(t ==4) {
-            image = r4;
-        }
-        if(t ==5) {
-            image = r5;
-        }
+    private void updateImage(int ic) {
+        image.setImagePath("runRight" + ic + ".png");
     }
    
-    public void updatePosiiton(String direction) {
+    public void updatePosiiton(String direction) {     
         switch(direction) {
-            case "right": image.moveBy(speed, 0);
+            case "right": if (this.centerX < Game.CANVAS_WIDTH - image.getWidth()/2 - speed) centerX += speed;
             break;
-            case "left": image.moveBy(-speed, 0);
+            case "left": if(this.centerX > image.getWidth()/2 - speed) centerX -= speed;
             break;
-            case "up": image.moveBy(0, -speed);
+            case "up": if(this.centerY > image.getHeight()/2 - speed) centerY -= speed;
             break;
-            case "down": image.moveBy(0, speed);
+            case "down": if (this.centerY < Game.CANVAS_HEIGHT + image.getHeight()/2 + speed) centerY += speed;
             break;
         }
-        System.out.println(image.getCenter());
+        image.setCenter(centerX, centerY);        
     }
         
-    public double getX() {
-        return x;
+    public double getCenterX() {
+        return centerX;
     }
 
-    public double getY() {
-        return y;
+    public double getCenterY() {
+        return centerY;
     }
 
     public Image getImage() {
