@@ -1,39 +1,27 @@
 package Game;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import edu.macalester.graphics.CanvasWindow;
 import edu.macalester.graphics.Image;
-
-// import edu.macalester.graphics.CanvasWindow;
-// import edu.macalester.graphics.FontStyle;
-// import edu.macalester.graphics.GraphicsGroup;
-// import edu.macalester.graphics.GraphicsText;
-// import edu.macalester.graphics.events.Key;
-
 
 public class Character {
     private Image image;
     private double speed = 5;
     private double centerX, centerY;
     public double upTimer, downTimer, leftTimer, rightTimer;
-    private double stepIncrement = 1;
+    private Image r0, r1, r2, r3, r4, r5, o0,
+    l0, l1, l2, l3, l4, l5;
     private String direction;
-    private boolean direcitonChanged;
-    private Image r0, r1, r2, r3, r4, r5, r6;
     
-    public Character () {
-        this.centerX = 250;
-        this.centerY = 300;
-        direcitonChanged = false;
+    public Character (double charX, double charY) {
+        this.centerX = charX;
+        this.centerY = charY;
         rightTimer = 0;
         upTimer = 0;
         downTimer = 0;
         leftTimer = 0;
         image = new Image("runRight0.png");
         image.setCenter(centerX, centerY);
-        direction = "right";
+        direction = "none";
         loadImages();
     } 
         
@@ -43,21 +31,31 @@ public class Character {
         r2 = new Image(centerX, centerY, "runRight2.png");
         r3 = new Image(centerX, centerY, "runRight3.png");
         r4 = new Image(centerX, centerY, "runRight4.png");
-        r5 = new Image(centerX, centerY, "runRight5.png");
-        r6 = new Image(centerX, centerY, "Owlet_Monster.png");
+        r5 = new Image(centerX, centerY, "runLeft0.png");
+        o0 = new Image(centerX, centerY, "Owlet_Monster.png");
     }
 
-    public void handleMovement(String direction, int ic) {
-        updateImage(ic);
-        updatePosiiton(direction);
+    public void handleMovement(int ic) {
+        updateRunImage(ic);
+        updateRunPosiiton();
     }
 
-    private void updateImage(int ic) {
-        image.setImagePath("runRight" + ic + ".png");
+    private void updateRunImage(int ic) {
+        if(this.direction.equals("right")){
+            image.setImagePath("run" + "Right" + ic + ".png");
+        }
+        if(this.direction.equals("left")){
+            image.setImagePath("run" + "Left" + ic + ".png");
+        }
+
+    }
+
+    public void resetCharacterImage() {
+        image.setImagePath("PinkStand.png");
     }
    
-    public void updatePosiiton(String direction) {     
-        switch(direction) {
+    public void updateRunPosiiton() {     
+        switch(this.direction) {
             case "right": if (this.centerX < Game.CANVAS_WIDTH - image.getWidth()/2 - speed) centerX += speed;
             break;
             case "left": if(this.centerX > image.getWidth()/2 - speed) centerX -= speed;
@@ -66,6 +64,7 @@ public class Character {
             break;
             case "down": if (this.centerY < Game.CANVAS_HEIGHT + image.getHeight()/2 + speed) centerY += speed;
             break;
+            case "none": break;
         }
         image.setCenter(centerX, centerY);        
     }
@@ -80,6 +79,10 @@ public class Character {
 
     public Image getImage() {
         return image;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
     
 }
