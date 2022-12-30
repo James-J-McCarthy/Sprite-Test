@@ -8,10 +8,8 @@ import java.util.Set;
 
 import edu.macalester.graphics.CanvasWindow;
 import edu.macalester.graphics.GraphicsGroup;
+import edu.macalester.graphics.GraphicsObject;
 import edu.macalester.graphics.Image;
-// import edu.macalester.graphics.FontStyle;
-// import edu.macalester.graphics.GraphicsGroup;
-// import edu.macalester.graphics.GraphicsText;
 import edu.macalester.graphics.events.Key;
 
 public class Game {
@@ -25,7 +23,10 @@ public class Game {
     private double movementTimer;
     private int imageCount;
     private Image blackCanvas, whiteStripeBackground, bigTiles, tree;
-    private GraphicsGroup backgroup, characterlayer, frontGroup;
+    private GraphicsGroup backgroup;
+    private static GraphicsGroup characterlayer;
+    private static GraphicsGroup groundGroup;
+    private GraphicsGroup frontGroup;
 
     public Game () {
         canvas = new CanvasWindow(null, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -33,6 +34,7 @@ public class Game {
         backgroup = new GraphicsGroup();
         characterlayer = new GraphicsGroup();
         frontGroup = new GraphicsGroup();
+        groundGroup = new GraphicsGroup();
 
         char1 = new Character(CANVAS_WIDTH/2, CANVAS_HEIGHT/2);
         setUpGraphics();
@@ -63,24 +65,26 @@ public class Game {
         
         tree = new Image("Layer04.png");
         tree.setPosition(CANVAS_WIDTH/2, CANVAS_HEIGHT*6/7 - tree.getHeight());
-        tree.setScale(1.5);
+        tree.setScale(1.9);
         tree.setMaxHeight(CANVAS_HEIGHT);
         frontGroup.add(tree);
+
+        characterlayer.add(char1.getImage());
 
         backgroup.add(blackCanvas);
         backgroup.add(whiteStripe2);
         backgroup.add(whiteStripeBackground);
-        ArrayList groundTiles = new ArrayList<>();
         for (double x = 0; x <= 30; x++){
-            Image groundTile = new Image(CANVAS_WIDTH*x/30, CANVAS_HEIGHT*6/7, "groundTile.png");
-            groundTile.setScale(3);
+            Image groundTile = new Image(CANVAS_WIDTH* x/30, CANVAS_HEIGHT *7/10, "groundTile.png");
+
+            groundTile.setAnchor(CANVAS_WIDTH* x/30, CANVAS_HEIGHT *7/10);
             groundTile.setMaxWidth(CANVAS_WIDTH/30);
-            groundTiles.add(groundTile);
-            backgroup.add(groundTile);
+
+            groundGroup.add(groundTile);
         }
         canvas.add(backgroup);
+        canvas.add(groundGroup);
         canvas.add(characterlayer);
-        canvas.add(char1.getImage());
         canvas.add(frontGroup);
     }
 
@@ -88,7 +92,7 @@ public class Game {
         Set<Key> keys = canvas.getKeysPressed();
         movementTimer += dt;
         
-        if(movementTimer > .2) {
+        if(movementTimer > .12) {
             movementTimer = 0;
             imageCount ++;
             if (imageCount ==5) imageCount = 0;
@@ -105,7 +109,7 @@ public class Game {
         if (keys.contains(Key.UP_ARROW)) {
             char1.setDirection("up");
         } 
-        char1.handleMovement(imageCount);
+        char1.handleMovement(imageCount, dt);
         if (!keys.contains(Key.LEFT_ARROW) && !keys.contains(Key.RIGHT_ARROW)
         && !keys.contains(Key.DOWN_ARROW) && !keys.contains(Key.UP_ARROW)) {
             char1.setDirection("none");
@@ -113,7 +117,18 @@ public class Game {
         }
     }
 
+    public static void setCharOnGround (Character character, GraphicsObject groundTile) {
+        character.setCenterY(groundTile.getPosition().getY() -  character.getHeight()*3/8);
+    }
+    
+    public static GraphicsObject getGroundUnderACharacter(Character character) {
+        GraphicsObject obj = groundGroup.getElementAt(character.getCenterX(),
+        character.getCenterY() + character.getHeight() * 3/8 );
+        return obj;
+    }  
+   
     public static void main(String[] args) {
         new Game();
     }
+
 }
