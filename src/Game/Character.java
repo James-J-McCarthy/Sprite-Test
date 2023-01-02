@@ -12,10 +12,10 @@ public class Character {
     l0, l1, l2, l3, l4, l5;
     private String direction;
     private double fallSpeed;
-    private double GRAVITY = 15;
+    private double GRAVITY = 18;
     private double dx, dy;
-    private double MAX_DX = 5;
-    private double MAX_DY = 10;
+    private double MAX_DX = 4;
+    private double MAX_DY = 8;
     public Character (double charX, double charY) {
         this.centerX = charX;
         this.centerY = charY;
